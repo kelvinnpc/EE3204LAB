@@ -110,6 +110,7 @@ void str_ser(int sockfd)
 		}
 		
 		lseek += n;
+		count = (count + 1) % 2
 		ack.num = 1;
 		ack.len = 0;
 		if ((n = send(sockfd, &ack, 2, 0))==-1)
