@@ -104,10 +104,12 @@ float str_cli(FILE *fp, int sockfd, long *len)
 	gettimeofday(&sendt, NULL);							//get the current time
 	while(ci<= lsize)
 	{
-		if ((lsize+1-ci) <= DATALEN)
+		int count = 0;
+		sendLength = ((count%2)+1)*DATALEN;
+		if ((lsize+1-ci) <= sendLength)
 			slen = lsize+1-ci;
 		else 
-			slen = DATALEN;
+			slen = sendLength;
 		memcpy(sends, (buf+ci), slen);
 		n = send(sockfd, &sends, slen, 0);
 		if(n == -1) {
@@ -120,6 +122,7 @@ float str_cli(FILE *fp, int sockfd, long *len)
 			exit(1);
 		}
 		ci += slen;
+		count++;
 	}
 	
 	if (ack.num != 1|| ack.len != 0)

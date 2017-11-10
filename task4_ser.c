@@ -72,26 +72,43 @@ void str_ser(int sockfd)
 	char buf[BUFSIZE];
 	FILE *fp;
 	char recvs[DATALEN];
+	char recvs2[2*DATALEN];
 	struct ack_so ack;
 	int end, n = 0;
 	long lseek=0;
 	end = 0;
-	
+	int count = 0;
 	printf("receiving data!\n");
 
 	while(!end)
 	{
-		if ((n= recv(sockfd, &recvs, DATALEN, 0))==-1)                                   //receive the packet
-		{
-			printf("error when receiving\n");
-			exit(1);
+		if (count == 0) {
+			if ((n= recv(sockfd, &recvs, DATALEN, 0))==-1)                                   //receive the packet
+			{
+				printf("error when receiving\n");
+				exit(1);
+			}
+			if (recvs[n-1] == '\0')									//if it is the end of the file
+			{
+				end = 1;
+				n --;
+			}
+			memcpy((buf+lseek), recvs, n);
 		}
-		if (recvs[n-1] == '\0')									//if it is the end of the file
-		{
-			end = 1;
-			n --;
+		else {
+			if ((n= recv(sockfd, &recvs2, 2*DATALEN, 0))==-1)                                   //receive the packet
+			{
+				printf("error when receiving\n");
+				exit(1);
+			}
+			if (recvs2[n-1] == '\0')									//if it is the end of the file
+			{
+				end = 1;
+				n --;
+			}
+			memcpy((buf+lseek), recvs2, n);
 		}
-		memcpy((buf+lseek), recvs, n);
+		
 		lseek += n;
 		ack.num = 1;
 		ack.len = 0;
