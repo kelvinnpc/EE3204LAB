@@ -107,7 +107,7 @@ float str_cli(FILE *fp, int sockfd, long *len)
 	int count = 0;
 	while(ci<= lsize)
 	{
-		sendLength = ((count%2)+1)*DATALEN;
+		sendLength = (count+1)*DATALEN;
 		if ((lsize+1-ci) <= sendLength)
 			slen = lsize+1-ci;
 		else 
@@ -124,7 +124,7 @@ float str_cli(FILE *fp, int sockfd, long *len)
 			exit(1);
 		}
 		ci += slen;
-		count++;
+		count = (count + 1) % 2;
 	}
 	
 	if (ack.num != 1|| ack.len != 0)
