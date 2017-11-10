@@ -80,6 +80,7 @@ float str_cli(FILE *fp, int sockfd, long *len)
 	char *buf;
 	long lsize, ci;
 	char sends[DATALEN];
+	char sends2[2*DATALEN];
 	struct ack_so ack;
 	int n, slen;
 	float time_inv = 0.0;
@@ -103,16 +104,16 @@ float str_cli(FILE *fp, int sockfd, long *len)
 	buf[lsize] ='\0';									//append the end byte
 	gettimeofday(&sendt, NULL);							//get the current time
 	int sendLength;
+	int count = 0;
 	while(ci<= lsize)
 	{
-		int count = 0;
 		sendLength = ((count%2)+1)*DATALEN;
 		if ((lsize+1-ci) <= sendLength)
 			slen = lsize+1-ci;
 		else 
 			slen = sendLength;
-		memcpy(sends, (buf+ci), slen);
-		n = send(sockfd, &sends, slen, 0);
+		(count == 0) ? memcpy(sends, (buf+ci), slen) : memcpy(sends2, (buf+ci), slen);
+		n = (count == 0) ? send(sockfd, &sends, slen, 0) : send(sockfd, &sends2, slen, 0);
 		if(n == -1) {
 			printf("send error!");								//send the data
 			exit(1);
