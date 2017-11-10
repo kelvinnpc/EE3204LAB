@@ -102,6 +102,7 @@ float str_cli(FILE *fp, int sockfd, long *len)
   /*** the whole file is loaded in the buffer. ***/
 	buf[lsize] ='\0';									//append the end byte
 	gettimeofday(&sendt, NULL);							//get the current time
+	int sendLength;
 	while(ci<= lsize)
 	{
 		int count = 0;
